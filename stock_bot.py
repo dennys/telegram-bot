@@ -22,7 +22,7 @@ tw = pytz.timezone("Asia/Taipei")
 now = datetime.now(tw)
 
 # weekday(): Mon=0 ... Sun=6
-if now.weekday() > 4:
+if now.weekday() > 9:
     print("Weekend - skip execution")
     exit()
 
