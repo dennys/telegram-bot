@@ -12,17 +12,24 @@ CHAT_ID = os.environ["CHAT_ID"]
 tw = pytz.timezone("Asia/Taipei")
 now = datetime.now(tw)
 
-if now.weekday() > 9:
+if now.weekday() > 4:  # FIXED: Sat/Sun skip
     exit()
 
 # ===== CONFIG =====
-us_stocks = ["AAPL", "NVDA", "GOOGL"]   # TSLA -> GOOGL
-tw_stocks = ["2330.TW", "7822.TW"]      # 2454.TW -> 7822.TW
+us_stocks = ["AAPL", "NVDA", "GOOGL"]
+tw_stocks = ["2330.TW", "7822.TW"]
 
 indices = {
     "NASDAQ": "^IXIC",
     "Dow": "^DJI",
     "TWII": "^TWII"
+}
+
+# ===== FX (NEW) =====
+fx_pairs = {
+    "TWD/USD": "TWDUSD=X",
+    "TWD/CNY": "TWDCNY=X",
+    "TWD/JPY": "TWDJPY=X"
 }
 
 # ===== HELPERS =====
@@ -54,23 +61,13 @@ def sentiment(pct):
     else:
         return "💀 strong down"
 
-# ===== BUTTON BUILDER =====
-def buttons(symbol):
-    return [
-        [
-            {"text": "📈 Chart", "url": yahoo(symbol)},
-            {"text": "📰 News", "url": f"https://finance.yahoo.com/quote/{symbol}/news"},
-            {"text": "⚠ Alert", "callback_data": f"alert:{symbol}"}
-        ]
-    ]
-
 # ===== BUILD MESSAGE =====
 lines = []
 all_changes = []
 
 lines.append("📊 *MARKET DASHBOARD*\n")
 
-# ===== US =====
+# ===== US STOCKS =====
 lines.append("🇺🇸 US STOCKS")
 
 for s in us_stocks:
@@ -78,10 +75,10 @@ for s in us_stocks:
     all_changes.append(pct)
 
     lines.append(
-        f"[{s}]({yahoo(s)})  {price_fmt(s, price):>10}  {pct:+.2f}%  ({sentiment(pct)})"
+        f"{s}  {price_fmt(s, price):>10}  {pct:+.2f}%  ({sentiment(pct)})"
     )
 
-# ===== TW =====
+# ===== TAIWAN STOCKS =====
 lines.append("\n🇹🇼 TAIWAN STOCKS")
 
 for s in tw_stocks:
@@ -89,7 +86,7 @@ for s in tw_stocks:
     all_changes.append(pct)
 
     lines.append(
-        f"[{s}]({yahoo(s)})  {price_fmt(s, price):>10}  {pct:+.2f}%  ({sentiment(pct)})"
+        f"{s}  {price_fmt(s, price):>10}  {pct:+.2f}%  ({sentiment(pct)})"
     )
 
 # ===== INDICES =====
@@ -100,7 +97,18 @@ for name, symbol in indices.items():
     all_changes.append(pct)
 
     lines.append(
-        f"[{name}]({yahoo(symbol)})  {price_fmt(symbol, price):>10}  {pct:+.2f}%  ({sentiment(pct)})"
+        f"{name}  {price_fmt(symbol, price):>10}  {pct:+.2f}%  ({sentiment(pct)})"
+    )
+
+# ===== FX (NEW SECTION) =====
+lines.append("\n💱 FX (TWD BASE)")
+
+for name, symbol in fx_pairs.items():
+    price, pct = fetch(symbol)
+    all_changes.append(pct)
+
+    lines.append(
+        f"{name}  {price:.4f}  {pct:+.2f}%"
     )
 
 # ===== AI MARKET SENTIMENT =====
@@ -117,32 +125,12 @@ else:
 
 text = f"🧠 AI SUMMARY: {mood}\n\n" + "\n".join(lines)
 
-# ===== INLINE BUTTONS (group level) =====
-keyboard = {
-    "inline_keyboard": [
-        [
-            {"text": "📈 AAPL", "url": yahoo("AAPL")},
-            {"text": "📈 NVDA", "url": yahoo("NVDA")},
-            {"text": "📈 GOOGL", "url": yahoo("GOOGL")}
-        ],
-        [
-            {"text": "📈 2330", "url": yahoo("2330.TW")},
-            {"text": "📈 7822", "url": yahoo("7822.TW")}
-        ],
-        [
-            {"text": "📊 NASDAQ", "url": yahoo("^IXIC")},
-            {"text": "📊 TWII", "url": yahoo("^TWII")}
-        ]
-    ]
-}
-
-# ===== SEND =====
+# ===== SEND (NO INLINE KEYBOARD) =====
 url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
 
 requests.post(url, json={
     "chat_id": CHAT_ID,
     "text": text,
     "parse_mode": "Markdown",
-    "disable_web_page_preview": True,
-    "reply_markup": keyboard
+    "disable_web_page_preview": True
 })
