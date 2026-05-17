@@ -12,7 +12,7 @@ CHAT_ID = os.environ["CHAT_ID"]
 tw = pytz.timezone("Asia/Taipei")
 now = datetime.now(tw)
 
-if now.weekday() > 4:
+if now.weekday() > 9:
     print("Weekend skip")
     exit()
 
