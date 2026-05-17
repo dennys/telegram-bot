@@ -117,25 +117,6 @@ else:
 
 text = f"🧠 AI SUMMARY: {mood}\n\n" + "\n".join(lines)
 
-# ===== INLINE BUTTONS (group level) =====
-keyboard = {
-    "inline_keyboard": [
-        [
-            {"text": "📈 AAPL", "url": yahoo("AAPL")},
-            {"text": "📈 NVDA", "url": yahoo("NVDA")},
-            {"text": "📈 GOOGL", "url": yahoo("GOOGL")}
-        ],
-        [
-            {"text": "📈 2330", "url": yahoo("2330.TW")},
-            {"text": "📈 7822", "url": yahoo("7822.TW")}
-        ],
-        [
-            {"text": "📊 NASDAQ", "url": yahoo("^IXIC")},
-            {"text": "📊 TWII", "url": yahoo("^TWII")}
-        ]
-    ]
-}
-
 # ===== SEND =====
 url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
 
