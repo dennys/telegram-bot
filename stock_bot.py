@@ -12,7 +12,7 @@ CHAT_ID = os.environ["CHAT_ID"]
 tw = pytz.timezone("Asia/Taipei")
 now = datetime.now(tw)
 
-if now.weekday() > 4:  # FIXED: Sat/Sun skip
+if now.weekday() > 8:  # FIXED: Sat/Sun skip
     exit()
 
 # ===== CONFIG =====
