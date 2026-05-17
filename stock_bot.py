@@ -8,17 +8,16 @@ import pytz
 BOT_TOKEN = os.environ["BOT_TOKEN"]
 CHAT_ID = os.environ["CHAT_ID"]
 
-# ===== TIME FILTER (Mon-Fri Taiwan) =====
+# ===== TIME FILTER (Mon-Fri TW) =====
 tw = pytz.timezone("Asia/Taipei")
 now = datetime.now(tw)
 
 if now.weekday() > 9:
-    print("Weekend skip")
     exit()
 
 # ===== CONFIG =====
-us_stocks = ["AAPL", "NVDA", "GOOGL"]
-tw_stocks = ["2330.TW", "7822.TW"]
+us_stocks = ["AAPL", "NVDA", "GOOGL"]   # TSLA -> GOOGL
+tw_stocks = ["2330.TW", "7822.TW"]      # 2454.TW -> 7822.TW
 
 indices = {
     "NASDAQ": "^IXIC",
@@ -27,6 +26,9 @@ indices = {
 }
 
 # ===== HELPERS =====
+def price_fmt(symbol, price):
+    return f"NT${price:.2f}" if symbol.endswith(".TW") or symbol == "^TWII" else f"${price:.2f}"
+
 def yahoo(symbol):
     return f"https://finance.yahoo.com/quote/{symbol}/"
 
@@ -36,8 +38,8 @@ def fetch(symbol):
 
     latest = d["Close"].iloc[-1]
     prev = d["Close"].iloc[-2]
-
     pct = ((latest - prev) / prev) * 100
+
     return latest, pct
 
 def sentiment(pct):
@@ -52,27 +54,57 @@ def sentiment(pct):
     else:
         return "💀 strong down"
 
-def format_price(symbol, price):
-    if symbol.endswith(".TW") or symbol == "^TWII":
-        return f"NT${price:.2f}"
-    return f"${price:.2f}"
+# ===== BUTTON BUILDER =====
+def buttons(symbol):
+    return [
+        [
+            {"text": "📈 Chart", "url": yahoo(symbol)},
+            {"text": "📰 News", "url": f"https://finance.yahoo.com/quote/{symbol}/news"},
+            {"text": "⚠ Alert", "callback_data": f"alert:{symbol}"}
+        ]
+    ]
 
-# ===== BUILD SENTIMENT =====
-changes = []
+# ===== BUILD MESSAGE =====
+lines = []
+all_changes = []
 
-def collect(symbol):
+lines.append("📊 *MARKET DASHBOARD*\n")
+
+# ===== US =====
+lines.append("🇺🇸 US STOCKS")
+
+for s in us_stocks:
+    price, pct = fetch(s)
+    all_changes.append(pct)
+
+    lines.append(
+        f"[{s}]({yahoo(s)})  {price_fmt(s, price):>10}  {pct:+.2f}%  ({sentiment(pct)})"
+    )
+
+# ===== TW =====
+lines.append("\n🇹🇼 TAIWAN STOCKS")
+
+for s in tw_stocks:
+    price, pct = fetch(s)
+    all_changes.append(pct)
+
+    lines.append(
+        f"[{s}]({yahoo(s)})  {price_fmt(s, price):>10}  {pct:+.2f}%  ({sentiment(pct)})"
+    )
+
+# ===== INDICES =====
+lines.append("\n🌍 INDICES")
+
+for name, symbol in indices.items():
     price, pct = fetch(symbol)
-    changes.append(pct)
-    return pct
+    all_changes.append(pct)
 
-# ===== PRE-CALC MARKET =====
-for s in us_stocks + tw_stocks:
-    collect(s)
+    lines.append(
+        f"[{name}]({yahoo(symbol)})  {price_fmt(symbol, price):>10}  {pct:+.2f}%  ({sentiment(pct)})"
+    )
 
-for _, s in indices.items():
-    collect(s)
-
-avg = sum(changes) / len(changes)
+# ===== AI MARKET SENTIMENT =====
+avg = sum(all_changes) / len(all_changes)
 
 if avg > 1:
     mood = "🟢 Strong bullish market"
@@ -83,14 +115,9 @@ elif avg > -1:
 else:
     mood = "🔴 Risk-off environment"
 
-# ===== CLEAN UI TEXT (NO TABLES) =====
-text = f"""🧠 AI MARKET SUMMARY
-{mood}
+text = f"🧠 AI SUMMARY: {mood}\n\n" + "\n".join(lines)
 
-📊 Watchlist updated (use buttons below)
-"""
-
-# ===== INLINE BUTTONS =====
+# ===== INLINE BUTTONS (group level) =====
 keyboard = {
     "inline_keyboard": [
         [
@@ -104,8 +131,7 @@ keyboard = {
         ],
         [
             {"text": "📊 NASDAQ", "url": yahoo("^IXIC")},
-            {"text": "📊 TWII", "url": yahoo("^TWII")},
-            {"text": "📊 Dow", "url": yahoo("^DJI")}
+            {"text": "📊 TWII", "url": yahoo("^TWII")}
         ]
     ]
 }
