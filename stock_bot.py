@@ -8,13 +8,6 @@ import pytz
 BOT_TOKEN = os.environ["BOT_TOKEN"]
 CHAT_ID = os.environ["CHAT_ID"]
 
-# ===== TIME FILTER (Mon-Fri TW) =====
-tw = pytz.timezone("Asia/Taipei")
-now = datetime.now(tw)
-
-if now.weekday() > 8:  # FIXED: Sat/Sun skip
-    exit()
-
 # ===== CONFIG =====
 us_stocks = ["AAPL", "NVDA", "GOOGL"]
 tw_stocks = ["2330.TW", "7822.TW"]
@@ -27,8 +20,8 @@ indices = {
 
 # ===== FX (NEW) =====
 fx_pairs = {
-    "TWD/USD": "TWDUSD=X",
-    "TWD/CNY": "TWDCNY=X",
+    "USD/TWD": "USDTWD=X",
+    "CNY/TWD": "CNYTWD=X",
     "TWD/JPY": "TWDJPY=X"
 }
 
