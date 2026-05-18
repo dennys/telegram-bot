@@ -20,9 +20,9 @@ indices = {
 
 # ===== FX (NEW) =====
 fx_pairs = {
-    "TWD/USD": "USDTWD=X",
-    "TWD/CNY": "TWDCNY=X",
-    "TWD/JPY": "TWDJPY=X"
+    "USD/TWD": "USDTWD=X",
+    "TWD/JPY": "TWDJPY=X",
+    "TWD/CNY": "TWDCNY=X"
 }
 
 # ===== HELPERS =====
