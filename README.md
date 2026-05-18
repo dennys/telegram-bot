@@ -4,6 +4,10 @@
 
 A Telegram bot that sends automated daily market dashboards featuring stock prices, market indices, and foreign exchange rates. Powered by Yahoo Finance and GitHub Actions for scheduled execution.
 
+## 🤖 AI-Assisted Generation
+
+This project has been **100% generated with AI assistance**. The entire codebase, including the Python implementation, workflow configurations, and documentation, was created using artificial intelligence tools.
+
 ## Features
 
 ✨ **Real-time Market Data**
@@ -67,3 +71,7 @@ export CHAT_ID="your_chat_id"
 
 # Run the bot
 python stock_bot.py
+```
+---
+
+Made with ❤️ using GitHub Actions and Telegram API
