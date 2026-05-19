@@ -6,7 +6,7 @@ A Telegram bot that sends automated daily market dashboards featuring stock pric
 
 ## 🤖 AI-Assisted Generation
 
-This project has been **100% generated with AI assistance**. The entire codebase, including the Python implementation, workflow configurations, and documentation, was created using artificial intelligence tools.
+This project has been **100% generated with AI assistance**. The entire codebase, including the Python implementation, workflow configurations, and documentation, was created using artificial intelligence.
 
 ## Features
 
@@ -47,15 +47,46 @@ This project has been **100% generated with AI assistance**. The entire codebase
 3. Replace `<BOT_TOKEN>` with your token
 4. Copy your **Chat ID** from the response
 
-### 3. Add Secrets to GitHub
+### 3. Configure GitHub Actions Variables
 
 1. Go to your repository settings
 2. Navigate to **Secrets and variables** → **Actions**
-3. Add two new secrets:
+3. Add two new **repository variables** (not secrets):
    - `BOT_TOKEN`: Your Telegram bot token
    - `CHAT_ID`: Your Telegram chat ID
 
-### 4. Install & Run Locally (Optional)
+**Why Variables Instead of Secrets?**
+- Variables are used for non-sensitive configuration values that may need to be referenced or modified frequently
+- Both are encrypted and require repository access to view
+
+### 4. Customize Stocks & Forex Rates
+
+To modify which stocks and forex pairs the bot tracks, edit the GitHub Actions workflow file:
+
+1. Open `.github/workflows/stock_bot.yml` (or your workflow file)
+2. Locate the variable definitions or the Python script configuration
+3. Update the stock symbols and forex pairs as needed:
+   - **US Stocks**: Modify the stock ticker list (e.g., AAPL, NVDA, GOOGL)
+   - **Taiwan Stocks**: Update Taiwan stock codes (e.g., 2330.TW, 7822.TW)
+   - **Market Indices**: Add or remove indices (NASDAQ, ^DJI, ^TWII)
+   - **Forex Pairs**: Change currency pairs (USD/TWD, TWD/JPY, TWD/CNY)
+4. Commit and push your changes
+5. The bot will use the updated configuration on the next scheduled run
+
+### 5. Adjust Execution Schedule
+
+To change when the bot runs:
+
+1. Open `.github/workflows/stock_bot.yml`
+2. Find the `schedule` section in the workflow
+3. Update the cron expressions:
+   - Current: `'15 1 * * 1-5'` (09:15 AM Taiwan time) and `'15 13 * * 1-5'` (1:15 PM Taiwan time)
+   - Cron format: `minute hour day month day-of-week`
+   - **Example**: Change to `'0 8 * * 1-5'` for 8:00 AM
+   - Note: Times are in UTC; convert to your timezone accordingly
+4. Commit and push; GitHub will apply the new schedule
+
+### 6. Install & Run Locally (Optional)
 
 ```bash
 # Clone the repository
@@ -72,6 +103,7 @@ export CHAT_ID="your_chat_id"
 # Run the bot
 python stock_bot.py
 ```
+
 ---
 
 Made with ❤️ using GitHub Actions and Telegram API
