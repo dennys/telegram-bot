@@ -27,4 +27,8 @@ jobs:
         env:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
           CHAT_ID: ${{ secrets.CHAT_ID }}
+          US_STOCKS: ${{ vars.US_STOCKS }}
+          TW_STOCKS: ${{ vars.TW_STOCKS }}
+          INDICES: ${{ vars.INDICES }}
+          FX_PAIRS: ${{ vars.FX_PAIRS }}
         run: python stock_bot.py
