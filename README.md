@@ -10,11 +10,11 @@ This project has been **100% generated with AI assistance**. The entire codebase
 
 ## Features
 
-✨ **Real-time Market Data**
-- 🇺🇸 US stocks (AAPL, NVDA, GOOGL)
-- 🇹🇼 Taiwan stocks (2330.TW, 7822.TW)
-- 🌍 Market indices (NASDAQ, Dow Jones, Taiwan Weighted Index)
-- 💱 Foreign exchange rates (USD/TWD, TWD/JPY, TWD/CNY)
+✨ **Real-time Market Data** (Fully Customizable)
+- 🇺🇸 US stocks (e.g., AAPL, NVDA, GOOGL — configure your own)
+- 🇹🇼 Taiwan stocks (e.g., 2330.TW, 7822.TW — configure your own)
+- 🌍 Market indices (e.g., NASDAQ, Dow Jones, Taiwan Weighted Index — configure your own)
+- 💱 Foreign exchange rates (e.g., USD/TWD, TWD/JPY, TWD/CNY — configure your own)
 
 📈 **Smart Analysis**
 - Calculates daily percentage changes
