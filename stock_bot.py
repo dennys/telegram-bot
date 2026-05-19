@@ -1,27 +1,32 @@
 import yfinance as yf
 import requests
 import os
+import json
 
 # ===== ENV =====
 BOT_TOKEN = os.environ["BOT_TOKEN"]
 CHAT_ID = os.environ["CHAT_ID"]
 
 # ===== CONFIG =====
-us_stocks = ["AAPL", "NVDA", "GOOGL"]
-tw_stocks = ["2330.TW", "7822.TW"]
-
-indices = {
+# Default values - can be overridden by environment variables
+DEFAULT_US_STOCKS = ["AAPL", "NVDA", "GOOGL"]
+DEFAULT_TW_STOCKS = ["2330.TW", "2454.TW"]
+DEFAULT_INDICES = {
     "NASDAQ": "^IXIC",
     "Dow": "^DJI",
     "TWII": "^TWII"
 }
-
-# ===== FX =====
-fx_pairs = {
+DEFAULT_FX_PAIRS = {
     "USD/TWD": "USDTWD=X",
     "TWD/JPY": "TWDJPY=X",
     "TWD/CNY": "TWDCNY=X"
 }
+
+# Parse from environment or use defaults
+us_stocks = json.loads(os.environ.get("US_STOCKS", json.dumps(DEFAULT_US_STOCKS)))
+tw_stocks = json.loads(os.environ.get("TW_STOCKS", json.dumps(DEFAULT_TW_STOCKS)))
+indices = json.loads(os.environ.get("INDICES", json.dumps(DEFAULT_INDICES)))
+fx_pairs = json.loads(os.environ.get("FX_PAIRS", json.dumps(DEFAULT_FX_PAIRS)))
 
 # ===== HELPERS =====
 def price_fmt(symbol, price):
