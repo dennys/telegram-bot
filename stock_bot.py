@@ -42,13 +42,20 @@ def md_link(name, symbol):
 
 def fetch(symbol):
     t = yf.Ticker(symbol)
-    d = t.history(period="2d")
+    d = t.history(period="5d")
 
     if len(d) < 2:
         raise Exception(f"Not enough data for {symbol}")
 
     latest = d["Close"].iloc[-1]
     prev = d["Close"].iloc[-2]
+
+    # If the rate is less than 1 (e.g. TWDCNY=X ≈ 0.22), invert both prices
+    # so the displayed value is more readable (e.g. ~4.5 CNY per TWD).
+    # Recalculating pct from the inverted prices keeps the sign correct.
+    if latest < 1:
+        latest = 1 / latest
+        prev = 1 / prev
 
     pct = ((latest - prev) / prev) * 100
 
